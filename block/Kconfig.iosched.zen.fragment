@@ -1,0 +1,48 @@
+# ---------------------------------------------------------------------------
+# Tempel ke block/Kconfig.iosched, di dalam blok
+#   menu "IO Schedulers"
+#   ...
+#   endmenu
+# sejajar dengan config IOSCHED_DEADLINE / IOSCHED_CFQ.
+# ---------------------------------------------------------------------------
+
+config IOSCHED_ZEN
+	tristate "Zen I/O scheduler"
+	default y
+	help
+	  I/O scheduler ringan dua-antrian (sync/async FIFO) yang
+	  memprioritaskan I/O sinkron dan terintegrasi dengan flag
+	  game_mode untuk menahan I/O async lebih lama saat gaming
+	  (mengurangi kontensi bandwidth storage dengan asset streaming).
+
+# ---------------------------------------------------------------------------
+# Tempel baris berikut ke block/Makefile:
+# ---------------------------------------------------------------------------
+# obj-$(CONFIG_IOSCHED_ZEN)		+= zen-iosched.o
+
+# ---------------------------------------------------------------------------
+# Blok "choice" default elevator ada di block/Kconfig.iosched juga, biasanya
+# berbentuk:
+#   choice
+#       prompt "Default I/O scheduler"
+#   ...
+#       config DEFAULT_DEADLINE
+#           bool "deadline" if IOSCHED_DEADLINE=y
+#   ...
+#       config DEFAULT_NONE
+#           bool "None"
+#   endchoice
+#
+# Tambahkan entry berikut sejajar dengan config DEFAULT_DEADLINE dkk:
+# ---------------------------------------------------------------------------
+	config DEFAULT_ZEN
+		bool "zen" if IOSCHED_ZEN=y
+
+# Lalu cari blok di bawah endchoice yang berbunyi kira-kira:
+#   config DEFAULT_IOSCHED
+#       string
+#       default "deadline" if DEFAULT_DEADLINE
+#       default "cfq" if DEFAULT_CFQ
+#       default "noop" if DEFAULT_NOOP
+# Tambahkan baris:
+#       default "zen" if DEFAULT_ZEN
