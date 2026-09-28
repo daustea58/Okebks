@@ -1,0 +1,5 @@
+# ---------------------------------------------------------------------------
+# Tempel baris ini ke dalam drivers/cpufreq/Makefile, sejajar dengan baris
+# obj-$(CONFIG_CPU_FREQ_GOV_ONDEMAND) dkk.
+# ---------------------------------------------------------------------------
+obj-$(CONFIG_CPU_FREQ_GOV_SCHEDHORIZON)	+= cpufreq_schedhorizon.o

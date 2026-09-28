@@ -1,0 +1,37 @@
+# ---------------------------------------------------------------------------
+# Tempel blok ini ke dalam drivers/cpufreq/Kconfig, di bagian "choice"
+# CPU_FREQ_DEFAULT_GOV_* dan di luar blok choice untuk config governornya.
+# Letakkan setelah entry governor lain (ondemand/interactive) agar konsisten.
+# ---------------------------------------------------------------------------
+
+config CPU_FREQ_GOV_SCHEDHORIZON
+	tristate "'schedhorizon' cpufreq governor"
+	depends on CPU_FREQ
+	select CPU_FREQ_GOV_COMMON
+	help
+	  'schedhorizon' - versi governor berbasis load scheduler yang
+	  dioptimalkan untuk workload gaming: menaikkan frekuensi lebih
+	  agresif saat load naik cepat (mirip interactive), tapi turun
+	  lebih halus saat load turun untuk mengurangi microstutter.
+
+	  Governor ini membaca sinyal utilisasi CPU per-cpu secara periodik
+	  (bukan event-driven scheduler hook) sehingga aman dipakai sebagai
+	  drop-in di kernel 4.14 non-GKI tanpa perlu backport walt/PELT
+	  scheduler hook penuh.
+
+	  Jika ragu, katakan N.
+
+config CPU_FREQ_DEFAULT_GOV_SCHEDHORIZON
+	bool "schedhorizon"
+	depends on CPU_FREQ_GOV_SCHEDHORIZON
+	help
+	  Gunakan governor 'schedhorizon' sebagai default cpufreq governor.
+
+# ---------------------------------------------------------------------------
+# Tempel choice value di bawah ini ke dalam blok:
+#   choice
+#       prompt "Default CPUFreq governor"
+#   ...
+#   endchoice
+# sebagai salah satu opsinya, sejajar dengan CPU_FREQ_DEFAULT_GOV_ONDEMAND dst.
+# ---------------------------------------------------------------------------
